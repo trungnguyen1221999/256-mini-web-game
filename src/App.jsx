@@ -59,21 +59,43 @@ function App() {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
+    // Fallback: Show install button if PWA is not installed and no prompt available
+    const checkPWAInstallable = () => {
+      // Don't show if already running as PWA
+      if (window.matchMedia('(display-mode: standalone)').matches || 
+          window.navigator.standalone === true) {
+        setShowInstallButton(false);
+        return;
+      }
+      
+      // Show install button if not PWA and no prompt received
+      if (!deferredPrompt) {
+        setShowInstallButton(true);
+      }
+    };
+
+    // Check after a delay to allow for beforeinstallprompt
+    const timer = setTimeout(checkPWAInstallable, 1000);
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
+      clearTimeout(timer);
     };
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      setDeferredPrompt(null);
-      setShowInstallButton(false);
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+        setShowInstallButton(false);
+      }
+    } else {
+      // Fallback: Show manual install instructions
+      alert('To install this app:\n\n• Chrome: Click menu (⋮) → "Add to Home screen"\n• Safari: Click share (□↗) → "Add to Home Screen"\n• Firefox: Click menu (☰) → "Install"\n\nOr use your browser\'s install option in the address bar!');
     }
   };
 
@@ -411,7 +433,7 @@ function App() {
                 className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg shadow flex items-center gap-2 mx-auto transition-colors"
               >
                 <Download className="w-5 h-5" />
-                Install App
+                {deferredPrompt ? 'Install App' : 'Add to Home Screen'}
               </button>
             )}
             
