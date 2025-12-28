@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { RotateCcw, Trophy, GamepadIcon, Clock, AlertCircle, QrCode, Camera, Download, Check } from 'lucide-react'
+import { RotateCcw, Trophy, GamepadIcon, Clock, AlertCircle, QrCode, Camera, Download, Check, Wifi, WifiOff } from 'lucide-react'
 import QrScanner from 'qr-scanner'
 import './App.css'
 
@@ -17,6 +17,7 @@ function App() {
   const [showScanner, setShowScanner] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallButton, setShowInstallButton] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const videoRef = useRef(null);
   const qrScannerRef = useRef(null);
   
@@ -42,6 +43,20 @@ function App() {
   
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
+
+  // Online/Offline detection
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // PWA Install functionality
   useEffect(() => {
@@ -400,7 +415,13 @@ function App() {
         <div className="text-center max-w-md mx-auto">
           <div className="bg-white p-8 rounded-xl shadow-2xl">
             <QrCode className="w-16 h-16 text-indigo-600 mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">Game 256</h1>
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-3xl font-bold text-gray-800">Game 256</h1>
+              <div className={`flex items-center gap-1 text-sm ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
+                {isOnline ? <Wifi size={16} /> : <WifiOff size={16} />}
+                {isOnline ? 'Online' : 'Offline'}
+              </div>
+            </div>
             <p className="text-gray-600 mb-4">
               🔒 Game is locked! Find the QR code and scan it to unlock.
             </p>
