@@ -15,6 +15,8 @@ function App() {
   });
   
   const [showScanner, setShowScanner] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallButton, setShowInstallButton] = useState(false);
   const videoRef = useRef(null);
   const qrScannerRef = useRef(null);
   
@@ -41,20 +43,26 @@ function App() {
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // PWA Install prompt
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
-
+  // PWA Install functionality
   useEffect(() => {
-    const handler = (e) => {
+    const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setShowInstallPrompt(true);
+      setShowInstallButton(true);
     };
 
-    window.addEventListener('beforeinstallprompt', handler);
+    const handleAppInstalled = () => {
+      setDeferredPrompt(null);
+      setShowInstallButton(false);
+    };
 
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
   }, []);
 
   const handleInstallClick = async () => {
@@ -65,7 +73,7 @@ function App() {
     
     if (outcome === 'accepted') {
       setDeferredPrompt(null);
-      setShowInstallPrompt(false);
+      setShowInstallButton(false);
     }
   };
 
@@ -397,7 +405,7 @@ function App() {
             </button>
             
             {/* PWA Install Button */}
-            {showInstallPrompt && (
+            {showInstallButton && (
               <button 
                 onClick={handleInstallClick}
                 className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg shadow flex items-center gap-2 mx-auto transition-colors"
