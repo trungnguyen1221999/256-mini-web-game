@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator - Game 256</title>
+    <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: inline-block;
+            max-width: 400px;
+        }
+        .qr-code {
+            margin: 20px 0;
+        }
+        .instructions {
+            color: #666;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .print-btn {
+            background: #4F46E5;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .print-btn:hover {
+            background: #3730A3;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .secret-code {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Game 256 - QR Code</h1>
+        <p>Print this QR code and place it somewhere for players to find!</p>
+        
+        <div class="secret-code">
+            Secret Code: GAME256_UNLOCK
+        </div>
+        
+        <div class="qr-code">
+            <canvas id="qrcode"></canvas>
+        </div>
+        
+        <button class="print-btn" onclick="window.print()">
+            🖨️ Print QR Code
+        </button>
+        
+        <div class="instructions">
+            <p><strong>Instructions:</strong></p>
+            <p>1. Print this page</p>
+            <p>2. Place the QR code somewhere for players to discover</p>
+            <p>3. Players must scan this code to unlock Game 256</p>
+            <p>4. Keep the secret! 🤫</p>
+        </div>
+    </div>
+
+    <script>
+        // Generate QR code when page loads
+        window.onload = function() {
+            const canvas = document.getElementById('qrcode');
+            QRCode.toCanvas(canvas, 'GAME256_UNLOCK', {
+                width: 200,
+                height: 200,
+                margin: 2,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, function(error) {
+                if (error) {
+                    console.error('QR Code generation failed:', error);
+                } else {
+                    console.log('QR Code generated successfully!');
+                }
+            });
+        };
+    </script>
+</body>
+</html>
