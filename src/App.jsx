@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { RotateCcw, Trophy, GamepadIcon, Clock, AlertCircle, QrCode, Camera } from 'lucide-react'
+import { RotateCcw, Trophy, GamepadIcon, Clock, AlertCircle, QrCode, Camera, Download } from 'lucide-react'
 import QrScanner from 'qr-scanner'
 import './App.css'
 
@@ -40,6 +40,34 @@ function App() {
   
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
+
+  // PWA Install prompt
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallPrompt(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handler);
+
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+      setShowInstallPrompt(false);
+    }
+  };
 
   // QR Scanner functions
   const startQrScanner = async () => {
@@ -362,11 +390,22 @@ function App() {
             
             <button 
               onClick={startQrScanner}
-              className="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-lg shadow flex items-center gap-2 mx-auto transition-colors"
+              className="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-lg shadow flex items-center gap-2 mx-auto transition-colors mb-4"
             >
               <Camera className="w-5 h-5" />
               Scan QR Code to Unlock
             </button>
+            
+            {/* PWA Install Button */}
+            {showInstallPrompt && (
+              <button 
+                onClick={handleInstallClick}
+                className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg shadow flex items-center gap-2 mx-auto transition-colors"
+              >
+                <Download className="w-5 h-5" />
+                Install App
+              </button>
+            )}
             
             <p className="text-xs text-gray-400 mt-4">
               🎯 Hint: Look for the secret QR code around you!
