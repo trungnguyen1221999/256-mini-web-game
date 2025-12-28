@@ -12,28 +12,62 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon-192.png', 'icon-512.png'],
       manifest: {
-        name: 'Game 256 - QR Unlock',
-        short_name: 'Game 256',
-        description: 'A fun 256 puzzle game that requires QR code to unlock',
-        theme_color: '#4F46E5',
+        name: '256 Mini Game',
+        short_name: '256 Game',
+        description: 'Một game 2048 đơn giản với mục tiêu 256',
+        theme_color: '#3b82f6',
         background_color: '#ffffff',
         display: 'standalone',
+        scope: '/',
         start_url: '/',
+        orientation: 'portrait',
+        categories: ['games'],
+        prefer_related_applications: false,
         icons: [
           {
             src: 'icon-192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: 'icon-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable'
           },
           {
             src: 'icon-512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: 'icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
           }
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+              }
+            }
+          }
+        ]
+      },
+      devOptions: {
+        enabled: true
       }
     })
   ],
