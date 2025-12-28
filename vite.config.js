@@ -13,7 +13,7 @@ export default defineConfig({
       includeAssets: ['icon-192.png', 'icon-512.png'],
       manifest: {
         name: '256 Mini Game',
-        short_name: '256 Game',
+        short_name: '256 Game', 
         description: 'Một game 2048 đơn giản với mục tiêu 256',
         theme_color: '#3b82f6',
         background_color: '#ffffff',
@@ -23,6 +23,8 @@ export default defineConfig({
         orientation: 'portrait',
         categories: ['games'],
         prefer_related_applications: false,
+        id: '/',
+        lang: 'vi',
         icons: [
           {
             src: 'icon-192.png',
@@ -31,21 +33,21 @@ export default defineConfig({
             purpose: 'any'
           },
           {
-            src: 'icon-192.png',
+            src: 'icon-192.png', 
             sizes: '192x192',
             type: 'image/png',
             purpose: 'maskable'
           },
           {
             src: 'icon-512.png',
-            sizes: '512x512',
+            sizes: '512x512', 
             type: 'image/png',
             purpose: 'any'
           },
           {
             src: 'icon-512.png',
             sizes: '512x512',
-            type: 'image/png',
+            type: 'image/png', 
             purpose: 'maskable'
           }
         ]
